@@ -11,7 +11,9 @@ from luma.core.virtual import viewport
 from luma.core.legacy import text, show_message
 from luma.core.legacy.font import proportional, CP437_FONT, TINY_FONT, SINCLAIR_FONT, LCD_FONT
 
+# omxplayer stopped working 3.1.19 - DBUS issues
 from omxplayer.player import OMXPlayer
+import pygame
 # import subprocess
 import time
 import argparse
@@ -52,7 +54,11 @@ songs = {  # songs list
     }
 
 # Start player with default song = RUTZ BEN SUSI
-player = OMXPlayer(songs[1], args=player_args, pause=True)
+# player = OMXPlayer(songs[1], args=player_args, pause=True)
+pygame.mixer.init()
+player = pygame.mixer.music
+player.load(songs[1])
+
 # start the led matrix 8Xx device 
 from breadboard.luma_local_utils import set_serial, set_long_device
 device = set_long_device()
@@ -91,6 +97,7 @@ def play_omx(song=1):
         player.set_volume(2)
     else:
         player.set_volume(1)
+    player.play()
 
 #    song_time = player.duration()
     print("PLAYING "+songs[song].split('/')[-1])

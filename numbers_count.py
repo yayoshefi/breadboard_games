@@ -18,9 +18,10 @@ numbers = {
 from gpiozero import LED, Button
 conter_btn = Button(16) # TODO Choose button
 
-from omxplayer.player import OMXPlayer
-# Start player with default song = RUTZ BEN SUSI
-player = OMXPlayer(numbers[1], args=['-o', 'alsa'], pause=True)
+import pygame
+pygame.mixer.init()
+player = pygame.mixer.music
+
 
 # start the luma led 32*8 led matrix
 from breadboard.luma_local_utils import set_serial, set_long_device
@@ -34,6 +35,7 @@ def activate(num):
     from luma.core.legacy import text, show_message
     from luma.core.legacy.font import proportional, CP437_FONT, TINY_FONT, SINCLAIR_FONT, LCD_FONT
     player.load(numbers[num])
+    player.play()
     if cntr == 10:
         show_message(device, '10', fill="white", font=proportional(CP437_FONT),
         scroll_delay=0.08)
@@ -43,7 +45,8 @@ def activate(num):
 
     cntr = (cntr+1) % 11
     import time
-    time.sleep(1.2)
+    while player.get_busy():
+        time.sleep(0.1)
     
 
 def cleanup ():
